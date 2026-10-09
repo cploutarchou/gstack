@@ -23,11 +23,11 @@ name: Free Tests
 
 on:
   pull_request:
-    branches: [main]
-  # Also on main pushes: two individually-green PRs can merge into a red
-  # main; without this nothing runs the free suite on main until the next PR.
+    branches: [master]
+  # Also on master pushes: two individually-green PRs can merge into a red
+  # master; without this nothing runs the free suite on master until the next PR.
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 # Keyed on the PR number, not head_ref: a bare branch name carries no fork
@@ -160,7 +160,7 @@ jobs:
         run: |
           git config --global user.email "free-tests-ci@gstack.test"
           git config --global user.name "Free Tests CI"
-          git config --global init.defaultBranch main
+          git config --global init.defaultBranch master
           # Some tests run git against the checkout itself; CI checkouts can be
           # owned by a different uid than the runner user.
           git config --global --add safe.directory '*'

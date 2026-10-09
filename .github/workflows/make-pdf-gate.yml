@@ -1,7 +1,7 @@
 name: make-pdf copy-paste gate
 on:
   pull_request:
-    branches: [main]
+    branches: [master]
     paths:
       - 'make-pdf/**'
       - 'lib/diagram-render/**'

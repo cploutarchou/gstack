@@ -2,7 +2,7 @@ name: Stage CSO Runtime Images
 
 # Pull requests build every reviewed input on its native architecture without
 # publishing. The cso-runtime-release environment must require a maintainer
-# reviewer and permit deployments from protected main only. Staging digests
+# reviewer and permit deployments from protected master only. Staging digests
 # never enter the execution catalog automatically.
 on:
   pull_request:
@@ -25,7 +25,7 @@ concurrency:
 
 jobs:
   reviewed-inputs:
-    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch')
+    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/master' && github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.inputs.outputs.matrix }}
@@ -115,7 +115,7 @@ jobs:
 
   stage:
     needs: reviewed-inputs
-    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'workflow_dispatch'
     environment: cso-runtime-release
     strategy:
       fail-fast: false
@@ -220,9 +220,9 @@ jobs:
           CSO_IMAGE: ${{ steps.image.outputs.name }}@${{ steps.build.outputs.digest }}
         run: |
           set -eu
-          signer="https://github.com/$GITHUB_REPOSITORY/.github/workflows/cso-runtime-images.yml@refs/heads/main"
-          gh attestation verify "oci://$CSO_IMAGE" --repo "$GITHUB_REPOSITORY" --cert-identity "$signer" --source-ref refs/heads/main --source-digest "$GITHUB_SHA" --deny-self-hosted-runners --predicate-type https://slsa.dev/provenance/v1 --format json > provenance-verification.json
-          gh attestation verify "oci://$CSO_IMAGE" --repo "$GITHUB_REPOSITORY" --cert-identity "$signer" --source-ref refs/heads/main --source-digest "$GITHUB_SHA" --deny-self-hosted-runners --predicate-type https://spdx.dev/Document/v2.3 --format json > sbom-verification.json
+          signer="https://github.com/$GITHUB_REPOSITORY/.github/workflows/cso-runtime-images.yml@refs/heads/master"
+          gh attestation verify "oci://$CSO_IMAGE" --repo "$GITHUB_REPOSITORY" --cert-identity "$signer" --source-ref refs/heads/master --source-digest "$GITHUB_SHA" --deny-self-hosted-runners --predicate-type https://slsa.dev/provenance/v1 --format json > provenance-verification.json
+          gh attestation verify "oci://$CSO_IMAGE" --repo "$GITHUB_REPOSITORY" --cert-identity "$signer" --source-ref refs/heads/master --source-digest "$GITHUB_SHA" --deny-self-hosted-runners --predicate-type https://spdx.dev/Document/v2.3 --format json > sbom-verification.json
       - name: Require a public package and anonymously load the exact staged digest
         env:
           GH_TOKEN: ${{ github.token }}
@@ -280,7 +280,7 @@ jobs:
 
   qualify-native:
     needs: [reviewed-inputs, stage]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'workflow_dispatch'
     environment: cso-runtime-release
     strategy:
       fail-fast: false

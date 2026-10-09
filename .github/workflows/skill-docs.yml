@@ -1,9 +1,9 @@
 name: Skill Docs Freshness
-# push is main-only: a push to a PR branch already fires the pull_request run;
+# push is master-only: a push to a PR branch already fires the pull_request run;
 # the unrestricted push trigger double-ran every PR commit.
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
 
 # Cancel superseded runs for the same branch (matches evals.yml,

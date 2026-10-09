@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       qualification_run_id:
-        description: Successful protected-main run containing cso-qualified-runtime-statements
+        description: Successful protected-master run containing cso-qualified-runtime-statements
         required: true
         type: string
 
@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   propose:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     environment: cso-runtime-release
@@ -51,7 +51,7 @@ jobs:
           gh api "repos/$GITHUB_REPOSITORY/actions/runs/$CSO_QUALIFICATION_RUN" > qualification-run.json
           jq -e '
             .status == "completed" and .conclusion == "success" and
-            .head_branch == "main" and .event == "repository_dispatch" and
+            .head_branch == "master" and .event == "repository_dispatch" and
             .path == ".github/workflows/cso-runtime-qualification.yml" and
             (.head_sha | test("^[a-f0-9]{40}$"))
           ' qualification-run.json
@@ -110,11 +110,11 @@ jobs:
           set -euo pipefail
           candidate_sha256="sha256:$(sha256sum runtime-catalog.candidate.json | cut -d ' ' -f 1)"
           subject_sha256="${candidate_sha256#sha256:}"
-          signer="https://github.com/$GITHUB_REPOSITORY/.github/workflows/cso-runtime-promote.yml@refs/heads/main"
+          signer="https://github.com/$GITHUB_REPOSITORY/.github/workflows/cso-runtime-promote.yml@refs/heads/master"
           verified=0
           for attempt in 1 2 3; do
             if gh attestation verify runtime-catalog.candidate.json --repo "$GITHUB_REPOSITORY" \
-              --cert-identity "$signer" --source-ref refs/heads/main --source-digest "$GITHUB_SHA" \
+              --cert-identity "$signer" --source-ref refs/heads/master --source-digest "$GITHUB_SHA" \
               --deny-self-hosted-runners --predicate-type https://slsa.dev/provenance/v1 \
               --format json > candidate-attestation-verification.tmp; then
               mv candidate-attestation-verification.tmp candidate-attestation-verification.json
@@ -166,7 +166,7 @@ jobs:
 
           Validation: runtime promotion contracts, distribution contracts, compiled CSO helper build, candidate attestation verification, and exact committed-byte comparison.
           EOF
-          gh pr create --base main --head "$branch" --title "Promote qualified CSO runtime catalog" --body-file pr-body.md
+          gh pr create --base master --head "$branch" --title "Promote qualified CSO runtime catalog" --body-file pr-body.md
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: cso-runtime-catalog-candidate
