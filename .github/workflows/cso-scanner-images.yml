@@ -1,6 +1,6 @@
 name: Qualify CSO Scanner Images
 
-# Branch dispatches may validate reviewed inputs. Only protected main and the
+# Branch dispatches may validate reviewed inputs. Only protected master and the
 # cso-scanner-release environment may publish or qualify scanner images. An
 # explicit promotion input may then propose a catalog.
 on:
@@ -45,7 +45,7 @@ jobs:
 
   stage-and-qualify:
     needs: reviewed-inputs
-    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'workflow_dispatch'
     environment: cso-scanner-release
     strategy:
       fail-fast: false
@@ -313,7 +313,7 @@ jobs:
 
   promote-catalog:
     needs: catalog-proposal
-    if: github.ref == 'refs/heads/main' && inputs.promote_catalog == true
+    if: github.ref == 'refs/heads/master' && inputs.promote_catalog == true
     environment: cso-scanner-release
     runs-on: ubuntu-24.04
     permissions:
@@ -324,7 +324,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: main
+          ref: master
           persist-credentials: true
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
@@ -370,4 +370,4 @@ jobs:
 
           Validation: scanner catalog contract tests and compiled CSO helper build.
           EOF
-          gh pr create --base main --head "$branch" --title "Promote qualified CSO scanner catalog" --body-file pr-body.md
+          gh pr create --base master --head "$branch" --title "Promote qualified CSO scanner catalog" --body-file pr-body.md

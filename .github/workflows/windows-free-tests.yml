@@ -24,7 +24,7 @@ name: Windows Free Tests
 
 on:
   pull_request:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 concurrency:
@@ -65,7 +65,7 @@ jobs:
         run: |
           git config --global user.email "windows-ci@gstack.test"
           git config --global user.name "Windows CI"
-          git config --global init.defaultBranch main
+          git config --global init.defaultBranch master
         shell: bash
 
       - name: Install dependencies

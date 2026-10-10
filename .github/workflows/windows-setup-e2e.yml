@@ -13,7 +13,7 @@ name: Windows Setup E2E
 
 on:
   pull_request:
-    branches: [main]
+    branches: [master]
     paths:
       - 'package.json'
       - 'scripts/build.sh'
@@ -62,7 +62,7 @@ jobs:
         run: |
           git config --global user.email "windows-setup-e2e@gstack.test"
           git config --global user.name "Windows Setup E2E"
-          git config --global init.defaultBranch main
+          git config --global init.defaultBranch master
         shell: bash
 
       - name: Install dependencies

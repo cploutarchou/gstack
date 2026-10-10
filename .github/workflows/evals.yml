@@ -1,7 +1,7 @@
 name: E2E Evals
 on:
   pull_request:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
     inputs:
       evals_all:
@@ -169,7 +169,7 @@ jobs:
           # map, routing) walk git at module load, and selection is
           # fail-closed on git errors — a shallow checkout crashed those
           # shards on the lane's first live run ("ambiguous argument
-          # 'main...HEAD'"). The manifest still governs WHICH shards run.
+          # 'master...HEAD'"). The manifest still governs WHICH shards run.
           fetch-depth: 0
           persist-credentials: false
 

@@ -1,9 +1,9 @@
 name: Workflow Lint
-# push is main-only: a push to a PR branch already fires the pull_request run;
+# push is master-only: a push to a PR branch already fires the pull_request run;
 # the unrestricted push trigger double-ran every PR commit.
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
 
 # PR-number keyed (run_id fallback for push): a bare branch name carries no
